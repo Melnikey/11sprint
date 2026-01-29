@@ -1,10 +1,16 @@
-FROM golang:latest
+FROM golang:1.25.1 AS builder
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
 
 RUN go mod download
+RUN go build -o app .
 
-CMD ["go", "run", "main.go"]
+FROM scratch
 
+WORKDIR /app
+
+COPY --from=builder /app/app .
+
+CMD ["./app"]
